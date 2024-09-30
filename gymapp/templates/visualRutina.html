@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-visual-rutina.css' %}">
+    <title>Weekly Routine</title>
+</head>
+
+<body>
+    <div class="cover">
+        <div class="content-container">
+
+            <div class="content">
+                <h1>Weekly Routine </h1>
+
+                <a href="/main" class="return-link">Return</a>
+                {% if entreno %}
+                <h1>Plan de Entrenamiento</h1>
+                {% for dia, detalles in entreno.items %}
+                <h2>Día: {{ dia }}</h2>
+                {% if detalles.Descanso %}
+                <p><strong>Descanso:</strong> {{ detalles.Descanso }}</p>
+                {% else %}
+                {% for key, value in detalles.items %}
+                {% if key == 'Ejercicios' %}
+                <h3>Ejercicios:</h3>
+                <ul>
+                    {% for ej, desc in value.items %}
+                    <li><strong>{{ ej }}:</strong> {{ desc }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p><strong>{{ key }}:</strong> {{ value }}</p>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <h1>No tienes una rutina semanal</h1>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

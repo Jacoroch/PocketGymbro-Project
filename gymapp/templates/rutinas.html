@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-rutina.css' %}">
+    <title>Excercise Routine</title>
+
+</head>
+<body>
+<div class="cover">
+
+    <div class="container">
+        <h1>Excercise Routine</h1>
+        
+        <a href="/main" class="return-link">Return</a>
+        <a href="/main/rutinas/weekly/" class="return-link">Weekly Routine</a>
+
+        
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="user_input" placeholder="Enter your ideas">
+            <label for="">Where are you going to train?</label>
+            <select name="place" id="place" required>
+                <option value="">Select</option>
+                <option value="Gym">Gym</option>
+                <option value="Home">Home</option>
+            </select>
+            <button type="submit">Generate A Routine</button>
+        </form>
+        
+        {% if entreno %}
+        <h1>Rutina de Ejercicio</h1>
+        <p><strong>Tiempo Aproximado:</strong> {{ entreno.Tiempo_Aproximado }}</p>
+        <p><strong>Tiempo de Descanso:</strong> {{ entreno.Tiempo_de_Descanso }}</p>
+        <p><strong>Calentamiento:</strong> {{ entreno.Calentamiento }}</p>
+        <p><strong>Número de series por ejercicio:</strong> {{ entreno.Numero_de_series_por_ejercicio }}</p>
+        
+        <h2>Ejercicios</h2>
+        <ul>
+            {% for key, value in entreno.Ejercicios.items %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% endfor %}
+        </ul>
+        <form method="POST"  action="did/">
+            {% csrf_token %}
+            <input type="hidden" name="r" value="{{ respuestaV }}">
+            <button type="submit" name="action" value="Go">Did</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+    
+</body>
+</html>

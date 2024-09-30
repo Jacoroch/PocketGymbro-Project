@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-visual-dieta.css' %}">
+    <title>Dieta</title>
+
+</head>
+<body>
+    <div class="cover">
+        <div class="content-container">
+            {% if error %}
+            <div class="content">
+                
+                <h1>No weekly diet has been saved</h1>
+                
+                <a href="/main" class="return-link">Return</a>
+                {% endif %}
+                {% if respuesta %}
+                <div class="content">
+                    <h1>Tu dieta guardada:</h1>
+                    
+                    <a href="/main" class="return-link">Return</a>
+                    
+                    {% for dia, comidas in respuesta.items %}
+                    <h2>{{ dia }}</h2>
+                    <ul>
+                        {% for comida, descripcion in comidas.items %}
+                        <li><strong>{{ comida }}:</strong> {{ descripcion }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+            
+        </body>
+</html>

@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-equipment.css' %}">
+    <title>Actualizar Equipamiento - Gimnasio</title>
+</head>
+<body>
+    <div class="cover">
+    <div class="container">
+        <h1>Upgrade Equipment</h1>
+        
+        <a href="/main" class="return-link">return</a>
+        
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn" type="submit">Update</button>
+        </form>
+    </div>
+
+    </div>
+
+</body>
+</html>

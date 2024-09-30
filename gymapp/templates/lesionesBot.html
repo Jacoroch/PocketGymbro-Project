@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-lesiones.css' %}">
+    <title>Routine History</title>
+
+</head>
+
+<body>
+    <div class="cover">
+        <div class="container">
+            <h1>Routine History</h1>
+            <a href="/main" class="return-link">Return</a>
+
+            {% if les %}
+            {% for lesion in les %}
+            <div class="routine-entry">
+                <p><strong>Fecha:</strong> {{ lesion.fecha }}</p>
+                <p><strong>Lesion:</strong> {{ lesion.lesion }}</p>
+                <p><strong>Estado:</strong>
+                    {% if lesion.estado %}
+                    Recuperado!</p>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="lesion_id" value="{{ lesion.id }}">
+                        <button type="submit">Cambiar Estado</button>
+                    </form>
+                    {% else %}
+                    Recuperandose D:</p>
+                    <form method="POST"  action="bot/">
+                        {% csrf_token %}
+                        <input type="hidden" name="lesion" id="lesion" value="{{ lesion.lesion }}">
+                        <button type="submit">Try our chatBot to help you</button>
+                    </form>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="lesion_id" value="{{ lesion.id }}">
+                        <button type="submit">Cambiar Estado</button>
+                    {% endif %}
+            </div>
+            {% endfor %} 
+            {% else %}
+            <h2>No se encontraron lesiones.</h2>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

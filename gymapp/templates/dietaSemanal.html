@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-diet-2.css' %}">
+    <title>Dieta</title>
+
+</head>
+<body>
+    <div class="cover">
+        <div class="content-container">
+            <div class="content">
+                <h1>Dieta</h1>
+                <a href="/main" class="">Return</a>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="user_input" placeholder="Enter your input here">
+                    <button type="submit">Generate Weekly Diet</button>
+                </form>
+                {% if respuesta %}
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="r" value="{{ osea }}">
+                    {% for dia, comidas in respuesta.items %}
+                    <h2>{{ dia }}</h2>
+                    <ul>
+                        {% for comida, descripcion in comidas.items %}
+                        <li><strong>{{ comida }}:</strong> {{ descripcion }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                    <div class="">
+                        <button type="submit" name="action" value="Save">Save</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

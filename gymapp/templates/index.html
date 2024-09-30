@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketGymbro</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'stylee.css' %}">
+</head>
+<body>
+    <div class="cover">
+        <img src="{% static 'images/Logo.png' %}" alt="Logo" class="logo">
+        <h1>Welcome to 
+            <br>
+            POCKET GYMBRO
+        </h1>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    <div class="container">
+        <h2>Login</h2>
+        <form action="." method="POST">
+            <div class="username">
+                {{form.errors}}
+            </div>
+            {% csrf_token %}
+            <div class="username">
+                {{form.username}}
+                <label>Username</label>
+            </div>
+            <div class="username">
+                {{form.password}}
+                <label>Password</label>
+            </div>
+            <input type="submit" value="Login">
+            <div class="register">
+                ¡Join our team <a href="{% url 'signup' %}">here</a>!
+
+            </div>
+        </form>
+    </div>
+</body>
+</html>

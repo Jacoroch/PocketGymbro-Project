@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-profile.css' %}">
+    <title>Actualizar Perfil - Gimnasio</title>
+</head>
+
+<body>
+    <div class="cover">
+
+        <div class="container">
+            <div class="form-container">
+                <h1>Update Profile</h1>
+
+                <a href="/main" class="return-link">Back menu</a>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="btn" type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

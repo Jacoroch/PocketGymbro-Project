@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'style-diet.css' %}">
+    <title>Dieta</title>
+</head>
+<body>
+<div class="cover">
+
+    <div class="container">
+        <h1>Diet</h1>
+        
+        <a href="/main" class="return-link">Return</a>
+        <a href="/main/dietaS/" class="return-link">Weekly Diet</a>
+        
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="user_input" placeholder="Enter your input here">
+            <button class="btn" type="submit">Generate Menu</button>
+        </form>
+        
+        {% if form %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button class="btn" type="submit" name="action" value="Save">Save</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+    
+</body>
+</html>
