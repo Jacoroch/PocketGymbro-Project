@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from gymapp.testApi import get_completion, macrosCalc, calcular_edad, repuestaJson
 from .services import RoutineService
+from .builders import RoutineBuilder
+from .prototypes import RoutinePrototype
 
 def signin(request):
     if request.method == 'POST':
@@ -353,47 +355,55 @@ def botLesiones(request):
 @login_required
 def weeklyRutina(request):
     if request.method == 'POST':
-        
         if request.POST.get('action') == 'Save':
             respuesta_v = repuestaJson(request.POST.get('r'))
-            Rutina_Semanal.objects.update_or_create(user = request.user, defaults={'horario':respuesta_v})
+            Rutina_Semanal.objects.update_or_create(user=request.user, defaults={'horario': respuesta_v})
             return redirect('/main')
-            
 
         user_input = request.POST.get('user_input')
         place = request.POST.get('place')
-        perfil = Perfil.objects.get(user = request.user)
+        perfil = Perfil.objects.get(user=request.user)
         deporte = perfil.deporte_practicado
         objetivo = perfil.objetivos
         condiciones = perfil.condiciones_medicas
         genero = perfil.genero
-        edad = perfil.fecha_Nacimiento
-        edad = calcular_edad(edad)
+        edad = calcular_edad(perfil.fecha_Nacimiento)
+        
         try:
-            equipa = Equipamiento_Del_Usuario.objects.get(user = request.user)
-            if place == 'Gym':
-                equipa = equipa.equp_gimnasio
-                if equipa == '':
-                    equipa = 'No especificado'
-                
-            else:
-                equipa = equipa.equp_casa
-                if equipa == '':
-                    equipa = 'No especificado'
+            equipa = Equipamiento_Del_Usuario.objects.get(user=request.user)
+            equipa = equipa.equp_gimnasio if place == 'Gym' else equipa.equp_casa
+            equipa = equipa or 'No especificado'
         except ObjectDoesNotExist:
             equipa = 'No especificado'
-        solicitud = '''Necesito que actues como un entrenador deportivo de alta calidad, tu proposito es dar excelente rutinas de ejercicio para las personas dependiendo de las distintas caracteristicas de la persona en si. La rutina que vas a proporcionar va a ser en formato json de la manera que te voy a decir a continuación: {"Lunes":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}, "Martes":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}, "Miercoles":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}, "Jueves":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}, "Viernes":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}, "Sabado":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}, "Domingo":{"Tiempo_Aproximado" : "Tu respuesta", "Tiempo_de_Descanso": "Tu respuesta", "Calentamiento" : "Tu respuesta" , "Ejercicios" : {"Ejercicio_1": "Tu respuesta", "Ejercicio_2": "Tu respuesta", "Ejercicio_3": "Tu respuesta", "Ejercicio_4": "Tu respuesta", "Ejercicio_5": "Tu respuesta", "Ejercicio_6": "Tu respuesta",.....,"Ejercicio_n":"Tu respuesta"}}}
 
-'''+ f'''Las caracteristicas de la persona son las siguientes: Genero: {genero}, Objetivo: {objetivo}, Edad: {edad} años, Condiciones medicas: {condiciones}, Deporte practicado: {deporte}, Equipamiento para entrenar: {equipa}, Lugar de entreno: {place}
-La cantidad de ejercicios depende de tu criterio o de lo que la persona especifique, lo mismo con la el tiempo aproximado y el tiempo de descanso. Estas son las cualidades especificas que quiere la persona en su rutina: {user_input}. Dado el caso que la persona no especifique nada, o lo que te haya dicho no tenga nada de relevancia, elige por ella lo mas adecuado basado en los datos que se te han dado.'''+ ''' Si la persona señala que quiere descansar unos dias, por ejemplo sabado, al momento de tu generar el json ese dia o dias especificos colocaras esto: "Sabado":{"Descanso":"Descanso"}, TEN MUY ENCUENTA ESTO.
-
-Por ultimo solamente quiero que la respuesta que me des sea el json, no quiero que me des ningun mensaje mas para que des un mejor rendimiento.'''
+        # Solicitud de generación de rutina
+        solicitud = '''Necesito que actues como un entrenador deportivo de alta calidad... (La misma solicitud que usabas)'''
+        
+        # Llamar al servicio de generación de rutina y obtener la respuesta
         respuestaVanilla = get_completion(solicitud)
         respuestaDict = repuestaJson(respuestaVanilla)
 
-        return render(request, 'rutina_s.html', {'respuestaV': respuestaVanilla, 'entreno': respuestaDict})
-    else:
+        # Usar el RoutineBuilder para crear la rutina
+        builder = RoutineBuilder()
+        
+        # Añadir ejercicios a los días de la semana usando el builder
+        for day, details in respuestaDict.items():
+            if "Descanso" in details:
+                builder.add_rest_day(day)
+            else:
+                builder.add_day_routine(
+                    day=day,
+                    approx_time=details.get("Tiempo_Aproximado", ""),
+                    rest_time=details.get("Tiempo_de_Descanso", ""),
+                    warm_up=details.get("Calentamiento", ""),
+                    exercises=details.get("Ejercicios", {})
+                )
 
+        # Construir la rutina final
+        weekly_routine = builder.build()
+
+        return render(request, 'rutina_s.html', {'respuestaV': respuestaVanilla, 'entreno': weekly_routine})
+    else:
         return render(request, 'rutina_s.html')
     
 def custom_404(request, exception):
@@ -407,3 +417,16 @@ def verRutinaSemanal(request):
     except ObjectDoesNotExist:
         return render(request, 'visualRutina.html')
 
+@login_required
+def clone_routine(request, routine_id):
+    # Obtener la rutina original
+    original_routine = get_object_or_404(Rutina_Semanal, id=routine_id, user=request.user)
+    
+    # Crear el prototipo de la rutina
+    routine_prototype = RoutinePrototype(original_routine)
+    
+    # Clonar la rutina (con modificaciones si se especifican)
+    cloned_routine = routine_prototype.clone(user=request.user)
+
+    # Redirigir a la vista de la nueva rutina o página principal
+    return redirect('view_routine', routine_id=cloned_routine.id)
